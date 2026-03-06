@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy Next.js site to Pages
 
 on:
   push:
-    branches: [ main ] # Adjust branch name if needed
+    branches: ["main", "master"] 
   workflow_dispatch:
 
 permissions:
@@ -17,9 +17,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Tell the worker to run all commands inside your app folder!
     defaults:
       run:
-        working-directory: ./cyber-platform # Build from the cyber-platform directory
+        working-directory: ./cyber-platform 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,19 +29,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: cyber-platform/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Build
-        run: npm run build
+      - name: Build with Next.js
+        run: npx next build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./cyber-platform/out
+          # Tell it exactly where to find the finished HTML
+          path: ./cyber-platform/out 
 
   deploy:
     environment:
